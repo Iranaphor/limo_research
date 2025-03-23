@@ -1,40 +1,27 @@
 {
   "name": "Research Workspace Dev Container",
-  // 1) Point to your docker-compose.yml file
   "dockerComposeFile": [
     "../docker-compose.yml"
   ],
-
-  // 2) Which service in docker-compose.yml do we attach to?
   "service": "research_ws",
-
-  // 3) Where VS Code should open within the container
   "workspaceFolder": "/root/research_ws",
-
-  // 4) If you want to ensure that the research_ws container is started when you open the Dev Container
   "runServices": [
     "research_ws"
   ],
-
-  // 5) Let the container run the command specified in docker-compose.yml
-  //    instead of the default Dev Container shell override
   "overrideCommand": false,
-
-  // 6) If you want to stop the container on closing VS Code
   "shutdownAction": "stopCompose",
-
-  // 7) Always run as root (common for ROS dev containers)
   "remoteUser": "root",
-
-  // 8) You can specify any environment variables here too, or rely on those from docker-compose.yml
-  // "containerEnv": {
-  //   "DISPLAY": ":0"
-  // },
-
-  // 9) Optionally run commands right after the container is created and your workspace is mounted
-  "postCreateCommand": "bash -c 'source /opt/ros/humble/setup.bash && rosdep update && rosdep install --from-paths /root/research_ws/src --ignore-src -r -y && colcon build'",
-
-  // 10) Any VS Code settings or extensions you want installed in the container
+  "containerEnv": {
+    "DISPLAY": ":0",
+    "LOMO_DRIVERS_HOST": "localhost",
+    "ROS_DOMAIN_ID": "0"
+  },
+  "postCreateCommand": [
+    "source /opt/ros/humble/setup.bash",
+    "rosdep update",
+    "rosdep install --from-paths /root/research_ws/src --ignore-src -r -y",
+    "colcon build"
+  ],
   "customizations": {
     "vscode": {
       "settings": {

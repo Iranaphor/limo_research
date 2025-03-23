@@ -1,57 +1,53 @@
-// For format details, see https://aka.ms/devcontainer.json. For config options, see the
-// README at: https://github.com/devcontainers/templates/tree/main/src/ubuntu
 {
-	"name": "lcas-ros2-teaching-humble",
-	// Or use a Dockerfile or Docker Compose file. More info: https://containers.dev/guide/dockerfile
-	"image": "lcas.lincoln.ac.uk/lcas/devcontainer/ros2-teaching:2324-devel",
-	// Features to add to the dev container. More info: https://containers.dev/features.
-	"features": {
-		"ghcr.io/devcontainers/features/desktop-lite:1": {}
-	},
+  "name": "Research Workspace Dev Container",
+  // 1) Point to your docker-compose.yml file
+  "dockerComposeFile": [
+    "../docker-compose.yml"
+  ],
 
-	// Use 'forwardPorts' to make a list of ports inside the container available locally.
-	// "forwardPorts": [],
-	"forwardPorts": [6080, 5901],
-	"portsAttributes": {
-	  "6080": {
-		"label": "novnc"
-	  },
-	  "5901": {
-		"label": "vnc"
-	  }
-	},
-	// Use 'postCreateCommand' to run commands after the container is created.
-	"postCreateCommand": "bash .devcontainer/run.sh",
-	"containerUser": "lcas",
-	// Configure tool-specific properties.
-	// "customizations": {},
-	"runArgs": [ "--security-opt", "seccomp=unconfined", "--cap-add=NET_ADMIN" ],
+  // 2) Which service in docker-compose.yml do we attach to?
+  "service": "research_ws",
 
-	"containerEnv": {
-        "ROS_LOCALHOST_ONLY": "0",
-        "LIBGL_ALWAYS_SOFTWARE": "1" // Needed for software rendering of opengl
-    },
+  // 3) Where VS Code should open within the container
+  "workspaceFolder": "/root/research_ws",
 
-	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
-    "customizations": {
-		"vscode": {
-			"extensions": [
-				"dotjoshjohnson.xml",
-				"zachflower.uncrustify",
-				"ms-python.python",
-				"ms-vscode.cpptools",
-				"redhat.vscode-yaml",
-				"smilerobotics.urdf",
-				"streetsidesoftware.code-spell-checker",
-				"twxs.cmake",
-				"king2021.vnc-extension",
-				"nonanonno.vscode-ros2",
-				"deitry.colcon-helper",
-				"yzhang.markdown-all-in-one",
-				"ms-azuretools.vscode-docker",
-				"github.vscode-github-actions"
-			]
-		}
-	}
+  // 4) If you want to ensure that the research_ws container is started when you open the Dev Container
+  "runServices": [
+    "research_ws"
+  ],
 
+  // 5) Let the container run the command specified in docker-compose.yml
+  //    instead of the default Dev Container shell override
+  "overrideCommand": false,
+
+  // 6) If you want to stop the container on closing VS Code
+  "shutdownAction": "stopCompose",
+
+  // 7) Always run as root (common for ROS dev containers)
+  "remoteUser": "root",
+
+  // 8) You can specify any environment variables here too, or rely on those from docker-compose.yml
+  // "containerEnv": {
+  //   "DISPLAY": ":0"
+  // },
+
+  // 9) Optionally run commands right after the container is created and your workspace is mounted
+  "postCreateCommand": "bash -c 'source /opt/ros/humble/setup.bash && rosdep update && rosdep install --from-paths /root/research_ws/src --ignore-src -r -y && colcon build'",
+
+  // 10) Any VS Code settings or extensions you want installed in the container
+  "customizations": {
+    "vscode": {
+      "settings": {
+        "terminal.integrated.defaultProfile.linux": "bash"
+      },
+      "extensions": [
+        "ms-azuretools.vscode-docker",
+        "ms-iot.vscode-ros",
+        "ms-python.python",
+        "ms-vscode.cpptools",
+        "twxs.cmake",
+        "yzhang.markdown-all-in-one"
+      ]
+    }
+  }
 }

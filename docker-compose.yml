@@ -1,0 +1,38 @@
+version: '3'
+services:
+  research_ws:
+    # 1) Build from your local Dockerfile
+    build:
+      context: .                # The build context (where Dockerfile.research is located)
+      dockerfile: Dockerfile.research
+      # pull_policy: if_not_present  # (Optional) Only pull the base image if not in local cache
+
+    # 2) Give the container a friendly name (optional)
+    container_name: research_ws
+
+    # 3) Use host networking (common for ROS or if you want direct access to hardware)
+    network_mode: host
+
+    # 4) Bind mount your local code into /root/research_ws/src
+    #    so you can edit code on your host and build inside the container
+    volumes:
+      - ./src:/root/research_ws/src
+      - /tmp/.X11-unix:/tmp/.X11-unix
+
+    # 5) Environment variables for GUI forwarding
+    environment:
+      - DISPLAY=${DISPLAY}
+      # If you’re rendering in software mode, you can also add:
+      # - LIBGL_ALWAYS_SOFTWARE=1
+
+    # 6) If you need GPU acceleration (NVIDIA), you could add:
+    # runtime: nvidia
+    # environment:
+    #   - NVIDIA_VISIBLE_DEVICES=all
+    #   - NVIDIA_DRIVER_CAPABILITIES=compute,graphics,utility
+    # or use a compose v3.7+ device request
+
+    # 7) Start in an interactive bash shell
+    command: ["/bin/bash"]
+    stdin_open: true
+    tty: true
